@@ -1,11 +1,12 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { menu, allProducts } from "@/lib/menu";
 import { useCart } from "@/lib/cart-context";
-import { BookIcon, ReceiptIcon, WhatsAppIcon, ScooterIcon } from "@/components/icons";
+import { BookIcon, WhatsAppIcon } from "@/components/icons";
 
 function formatBRL(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -54,22 +55,15 @@ const STEPS = [
     number: "1",
     icon: BookIcon,
     color: "text-red-500 bg-red-500/10",
-    title: "Escolha os itens",
-    text: "Monte seu pedido no cardápio abaixo",
+    title: "Escolha o que você quer",
+    text: "Monte seu pedido pelo cardápio.",
   },
   {
     number: "2",
-    icon: ReceiptIcon,
-    color: "text-gold bg-gold/10",
-    title: "Confira e informe seus dados",
-    text: "Endereço, pagamento e observações",
-  },
-  {
-    number: "3",
     icon: WhatsAppIcon,
     color: "text-[#25D366] bg-[#25D366]/10",
-    title: "Finalize no WhatsApp",
-    text: "Enviamos tudo prontinho pra Premium",
+    title: "Envie pelo WhatsApp",
+    text: "Seu pedido já chega organizado para nossa equipe.",
   },
 ];
 
@@ -125,8 +119,18 @@ function PedidoContent() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col bg-cream-050 pb-32 md:max-w-2xl">
-      <header className="sticky top-0 z-20 border-b border-ink-900/10 bg-cream-050/95 px-6 pb-4 pt-5 backdrop-blur">
-        <div className="flex items-center justify-between">
+      <div className="px-6 pb-4 pt-5">
+        <div className="flex items-center justify-center">
+          <Image
+            src="/images/logo.png"
+            alt="Premium Steak Burger"
+            width={766}
+            height={290}
+            className="h-8 w-auto brightness-0"
+          />
+        </div>
+
+        <div className="mt-4 flex items-center justify-between">
           <Link
             href="/"
             className="text-xs font-semibold uppercase tracking-wide text-ink-900/60 transition-colors hover:text-red-500"
@@ -137,7 +141,7 @@ function PedidoContent() {
         </div>
 
         <h1 className="mt-3 font-display text-xl font-bold leading-snug text-ink-900">
-          Veja como é fácil fazer seu pedido
+          Peça do seu jeito!
         </h1>
 
         {/* Como funciona */}
@@ -157,17 +161,20 @@ function PedidoContent() {
           ))}
         </div>
 
-        {/* Aviso de frete */}
-        <div className="mt-4 flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2.5">
-          <ScooterIcon className="h-4 w-4 shrink-0 text-cream-050" />
-          <p className="text-[11px] font-medium leading-snug text-cream-050">
-            A taxa de entrega não está incluída — o valor do frete é informado
-            pelo nosso WhatsApp na hora de fechar o pedido.
-          </p>
+        <div className="mt-4">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="🔎 Procurar hambúrguer, porção, sobremesa…"
+            className="w-full rounded-full border border-ink-900/15 bg-white px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-900/40 focus:border-red-500/60 focus:outline-none"
+          />
         </div>
+      </div>
 
-        {/* Atalhos de categoria */}
-        <div className="mt-4 -mx-6 flex gap-2 overflow-x-auto px-6 pb-1">
+      {/* Atalhos de categoria — fixos no topo ao rolar */}
+      <div className="sticky top-0 z-20 border-b border-ink-900/10 bg-cream-050/95 px-6 py-3 backdrop-blur">
+        <div className="-mx-6 flex gap-2 overflow-x-auto px-6">
           {menu.map((category, i) => {
             const isActive = openCategory === category.id && !search;
             const colorClass = CHIP_COLORS[i % CHIP_COLORS.length].active;
@@ -186,17 +193,7 @@ function PedidoContent() {
             );
           })}
         </div>
-
-        <div className="mt-4">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="🔎 Procurar hambúrguer, porção, sobremesa…"
-            className="w-full rounded-full border border-ink-900/15 bg-white px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-900/40 focus:border-red-500/60 focus:outline-none"
-          />
-        </div>
-      </header>
+      </div>
 
       <div className="px-6">
         {searchResults ? (
@@ -207,49 +204,42 @@ function PedidoContent() {
               </p>
             ) : (
               searchResults.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  requireAccompaniment={product.categoryId === "cortes"}
+                />
               ))
             )}
           </div>
         ) : (
-          menu.map((category) => {
-            const isOpen = openCategory === category.id;
-            return (
-              <div
-                key={category.id}
-                ref={(el) => {
-                  sectionRefs.current[category.id] = el;
-                }}
-                className="scroll-mt-[21rem] border-b border-ink-900/10 py-4"
-              >
-                <button
-                  onClick={() => setOpenCategory(isOpen ? null : category.id)}
-                  className="flex w-full items-center justify-between"
-                >
-                  <span className="font-display text-base font-semibold tracking-wide text-ink-900">
-                    {category.name}
-                  </span>
-                  <span
-                    className={`text-red-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-                  >
-                    ▾
-                  </span>
-                </button>
-                {isOpen && (
-                  <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-                    {category.note && (
-                      <p className="text-xs font-light text-ink-900/50 md:col-span-2">
-                        {category.note}
-                      </p>
-                    )}
-                    {category.products.map((product) => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
-                  </div>
+          menu.map((category) => (
+            <div
+              key={category.id}
+              ref={(el) => {
+                sectionRefs.current[category.id] = el;
+              }}
+              className="scroll-mt-[3.5rem] border-b border-ink-900/10 py-4"
+            >
+              <span className="font-display text-base font-semibold tracking-wide text-ink-900">
+                {category.name}
+              </span>
+              <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+                {category.note && (
+                  <p className="text-xs font-light text-ink-900/50 md:col-span-2">
+                    {category.note}
+                  </p>
                 )}
+                {category.products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    requireAccompaniment={category.id === "cortes"}
+                  />
+                ))}
               </div>
-            );
-          })
+            </div>
+          ))
         )}
       </div>
 
@@ -263,7 +253,7 @@ function PedidoContent() {
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cream-050 text-xs font-bold text-red-600">
                 {itemCount}
               </span>
-              Ver pedido
+              Conferir e enviar pelo WhatsApp
             </span>
             <span className="text-sm font-semibold text-cream-050">
               {formatBRL(subtotal)}
@@ -275,11 +265,25 @@ function PedidoContent() {
   );
 }
 
+const ACCOMPANIMENTS = [
+  "Trio de fritas (batata frita, aipim e polenta)",
+  "Arroz, maionese de batata e farofa da casa",
+  "Mix de legumes salteados",
+];
+
 function ProductCard({
   product,
+  requireAccompaniment = false,
 }: {
   product: { id: string; name: string; description: string; price: number };
+  requireAccompaniment?: boolean;
 }) {
+  const { quantityOf, increment, noteOf, setNote } = useCart();
+  const qty = quantityOf(product.id);
+  const note = noteOf(product.id);
+  const [pending, setPending] = useState("");
+  const needsChoice = requireAccompaniment && qty === 0;
+
   return (
     <div className="rounded-[14px] border border-ink-900/10 bg-white p-4 shadow-[0_2px_10px_rgba(20,17,16,0.04)]">
       <div className="flex items-start justify-between gap-3">
@@ -295,10 +299,52 @@ function ProductCard({
           <p className="mt-2 text-sm font-semibold text-red-500">
             {formatBRL(product.price)}
           </p>
+          {requireAccompaniment && qty > 0 && note && (
+            <p className="mt-2 text-xs text-ink-900/60">
+              Acompanhamento: {note}
+            </p>
+          )}
         </div>
       </div>
+
+      {needsChoice && (
+        <div className="mt-3 flex flex-col gap-1.5 border-t border-ink-900/10 pt-3">
+          <p className="text-xs font-semibold text-ink-900">
+            Escolha 1 acompanhamento:
+          </p>
+          {ACCOMPANIMENTS.map((option) => (
+            <label
+              key={option}
+              className="flex items-center gap-2 text-xs text-ink-900/80"
+            >
+              <input
+                type="radio"
+                name={`accompaniment-${product.id}`}
+                checked={pending === option}
+                onChange={() => setPending(option)}
+                className="accent-red-500"
+              />
+              {option}
+            </label>
+          ))}
+        </div>
+      )}
+
       <div className="mt-3 flex justify-end">
-        <QuantityStepper productId={product.id} />
+        {needsChoice ? (
+          <button
+            onClick={() => {
+              increment(product.id);
+              setNote(product.id, pending);
+            }}
+            disabled={!pending}
+            className="rounded-full bg-red-500 px-4 py-2 text-xs font-semibold tracking-wide text-cream-050 transition-all duration-200 hover:bg-red-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Adicionar
+          </button>
+        ) : (
+          <QuantityStepper productId={product.id} />
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
@@ -44,6 +45,7 @@ export default function CheckoutPage() {
     city: "Guarapuava - PR",
     notes: "",
     payment: "PIX" as CheckoutInfo["payment"],
+    coupon: "",
   });
 
   const [cepStatus, setCepStatus] = useState<"idle" | "loading" | "done" | "error">(
@@ -139,6 +141,16 @@ export default function CheckoutPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col bg-cream-050 pb-40 md:max-w-2xl">
       <header className="sticky top-0 z-20 border-b border-ink-900/10 bg-cream-050/95 px-6 py-5 backdrop-blur">
+        <div className="mb-3 flex items-center justify-center">
+          <Image
+            src="/images/logo.png"
+            alt="Premium Steak Burger"
+            width={766}
+            height={290}
+            className="h-8 w-auto brightness-0"
+          />
+        </div>
+
         <div className="flex items-center justify-between">
           <Link
             href="/pedido"
@@ -157,12 +169,24 @@ export default function CheckoutPage() {
         <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-red-500">
           Seu pedido
         </h2>
+
+        <div className="mt-3 flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2.5">
+          <ScooterIcon className="h-4 w-4 shrink-0 text-cream-050" />
+          <p className="text-[11px] font-medium leading-snug text-cream-050">
+            A taxa de entrega não está incluída. O valor do frete é informado
+            pelo nosso WhatsApp na hora de fechar o pedido.
+          </p>
+        </div>
+
         <div className="mt-3 flex flex-col gap-2 rounded-[14px] border border-ink-900/10 bg-white p-4">
           {items.map(({ line, product }) => (
             <div key={line.productId} className="flex items-center justify-between text-sm">
               <div>
                 <span className="text-ink-900">{product.name}</span>
                 <span className="ml-2 text-ink-900/40">x{line.quantity}</span>
+                {line.note && (
+                  <p className="mt-0.5 text-xs text-ink-900/50">{line.note}</p>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-ink-900/80">
@@ -198,14 +222,6 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {deliveryFee === 0 && form.neighborhood === "" && (
-          <div className="mt-3 flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2.5">
-            <ScooterIcon className="h-4 w-4 shrink-0 text-cream-050" />
-            <p className="text-[11px] font-medium leading-snug text-cream-050">
-              Selecione seu bairro para ver o valor do frete.
-            </p>
-          </div>
-        )}
         {deliveryFee === 0 && form.neighborhood !== "" && (
           <div className="mt-3 flex items-center gap-2 rounded-full bg-red-500/10 px-4 py-2.5 border border-red-500/25">
             <ScooterIcon className="h-4 w-4 shrink-0 text-red-500" />
@@ -249,9 +265,9 @@ export default function CheckoutPage() {
           </button>
         </div>
 
-        <div className="mt-4 flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2.5">
-          <span className="text-xs font-semibold text-cream-050">⏱️</span>
-          <p className="text-[11px] font-medium leading-snug text-cream-050">
+        <div className="mt-4 flex items-center gap-2 px-1">
+          <span className="text-xs">⏱️</span>
+          <p className="text-[11px] font-medium leading-snug text-ink-900/50">
             Tempo estimado: 40 a 60 minutos
           </p>
         </div>
@@ -377,6 +393,21 @@ export default function CheckoutPage() {
               {option}
             </button>
           ))}
+        </div>
+      </section>
+
+      <section className="px-6 pt-8">
+        <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-red-500">
+          Cupom de desconto
+        </h2>
+        <div className="mt-3">
+          <input
+            type="text"
+            value={form.coupon}
+            onChange={handleChange("coupon")}
+            placeholder="🏷️ Código do cupom (opcional)"
+            className="w-full rounded-full border border-ink-900/15 bg-white px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-900/35 focus:border-red-500/60 focus:outline-none"
+          />
         </div>
       </section>
 

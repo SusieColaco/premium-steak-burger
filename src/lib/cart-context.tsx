@@ -12,12 +12,14 @@ import { allProducts } from "@/lib/menu";
 
 const STORAGE_KEY = "premium-cart-v1";
 
-type CartLine = { productId: string; quantity: number };
+type CartLine = { productId: string; quantity: number; note?: string };
 
 type CartContextValue = {
   lines: CartLine[];
   quantityOf: (productId: string) => number;
+  noteOf: (productId: string) => string | undefined;
   setQuantity: (productId: string, quantity: number) => void;
+  setNote: (productId: string, note: string) => void;
   increment: (productId: string) => void;
   decrement: (productId: string) => void;
   clear: () => void;
@@ -51,15 +53,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const setQuantity = useCallback((productId: string, quantity: number) => {
     setLines((prev) => {
+      const existing = prev.find((l) => l.productId === productId);
       const next = prev.filter((l) => l.productId !== productId);
-      if (quantity > 0) next.push({ productId, quantity });
+      if (quantity > 0) {
+        next.push({ productId, quantity, note: existing?.note });
+      }
       return next;
     });
+  }, []);
+
+  const setNote = useCallback((productId: string, note: string) => {
+    setLines((prev) =>
+      prev.map((l) => (l.productId === productId ? { ...l, note } : l))
+    );
   }, []);
 
   const quantityOf = useCallback(
     (productId: string) =>
       lines.find((l) => l.productId === productId)?.quantity ?? 0,
+    [lines]
+  );
+
+  const noteOf = useCallback(
+    (productId: string) => lines.find((l) => l.productId === productId)?.note,
     [lines]
   );
 
@@ -93,7 +109,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         lines,
         quantityOf,
+        noteOf,
         setQuantity,
+        setNote,
         increment,
         decrement,
         clear,

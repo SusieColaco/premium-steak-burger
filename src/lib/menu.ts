@@ -12,7 +12,7 @@ export type Category = {
   note?: string;
 };
 
-export const menu: Category[] = [
+const baseMenu: Category[] = [
   {
     id: "entradas",
     name: "Entradas",
@@ -96,42 +96,6 @@ export const menu: Category[] = [
         description:
           "Cubos de picanha de cordeiro, grelhada na brasa, com tempero exclusivo e sabor inigualável.",
         price: 30,
-      },
-      {
-        id: "molho-pimenta-premium",
-        name: "Molho de Pimenta Premium",
-        description: "Molho especial para acompanhar os espetos.",
-        price: 3,
-      },
-      {
-        id: "geleia-abacaxi-pimenta",
-        name: "Geleia de Abacaxi com Pimenta",
-        description: "Molho especial para acompanhar os espetos.",
-        price: 4,
-      },
-      {
-        id: "molho-rose",
-        name: "Molho Rosé",
-        description: "Molho especial para acompanhar os espetos.",
-        price: 3,
-      },
-      {
-        id: "chimichurri",
-        name: "Molho Rosé Chimichurri",
-        description: "Molho especial para acompanhar os espetos.",
-        price: 3,
-      },
-      {
-        id: "molho-barbecue",
-        name: "Barbecue",
-        description: "Molho especial para acompanhar os espetos.",
-        price: 5,
-      },
-      {
-        id: "molho-alho",
-        name: "Molho de Alho",
-        description: "Molho especial para acompanhar os espetos.",
-        price: 3,
       },
     ],
   },
@@ -438,12 +402,48 @@ export const menu: Category[] = [
         price: 54,
       },
     ],
-    note: "Pão sem glúten e vegano disponível. Consulte os valores na categoria Adicionais.",
+    note: "Pão sem glúten e vegano disponível. Consulte os valores na categoria Molhos e Adicionais.",
   },
   {
-    id: "adicionais",
-    name: "Adicionais",
+    id: "molhos-adicionais",
+    name: "Molhos e Adicionais",
     products: [
+      {
+        id: "molho-pimenta-premium",
+        name: "Molho de Pimenta Premium",
+        description: "Molho especial para acompanhar os espetos.",
+        price: 3,
+      },
+      {
+        id: "geleia-abacaxi-pimenta",
+        name: "Geleia de Abacaxi com Pimenta",
+        description: "Molho especial para acompanhar os espetos.",
+        price: 4,
+      },
+      {
+        id: "molho-rose",
+        name: "Molho Rosé",
+        description: "Molho especial para acompanhar os espetos.",
+        price: 3,
+      },
+      {
+        id: "chimichurri",
+        name: "Molho Chimichurri",
+        description: "Molho especial para acompanhar os espetos.",
+        price: 3,
+      },
+      {
+        id: "molho-barbecue",
+        name: "Barbecue",
+        description: "Molho especial para acompanhar os espetos.",
+        price: 5,
+      },
+      {
+        id: "molho-alho",
+        name: "Molho de Alho",
+        description: "Molho especial para acompanhar os espetos.",
+        price: 3,
+      },
       { id: "add-milho", name: "Milho", description: "", price: 5 },
       { id: "add-ovo", name: "Ovo", description: "", price: 5 },
       { id: "add-cebola-roxa", name: "Cebola Roxa", description: "", price: 5 },
@@ -540,6 +540,30 @@ export const menu: Category[] = [
   },
 ];
 
-export const allProducts = menu.flatMap((c) =>
+const MAIS_PEDIDOS_IDS = [
+  "bolinho-costela-10",
+  "prime-rib",
+  "fraldinha-queijos",
+  "cheese-alcatra",
+  "premium-especial",
+  "premium-costela",
+  "premium-mignon-mostarda",
+];
+
+const baseProducts = baseMenu.flatMap((c) => c.products);
+
+const maisPedidos: Category = {
+  id: "mais-pedidos",
+  name: "🔥 Os Mais Pedidos",
+  products: MAIS_PEDIDOS_IDS.map((id) => {
+    const product = baseProducts.find((p) => p.id === id);
+    if (!product) throw new Error(`Produto não encontrado no cardápio: ${id}`);
+    return product;
+  }),
+};
+
+export const menu: Category[] = [maisPedidos, ...baseMenu];
+
+export const allProducts = baseMenu.flatMap((c) =>
   c.products.map((p) => ({ ...p, categoryId: c.id, categoryName: c.name }))
 );

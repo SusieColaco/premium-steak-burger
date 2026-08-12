@@ -92,19 +92,9 @@ export default function Home() {
       {/* Botões principais */}
       <section className="relative z-10 mx-auto w-full max-w-md px-6 md:max-w-2xl">
         <div className="flex flex-col gap-3 md:flex-row">
-          <a
-            href={siteConfig.whatsappGroupUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-1 items-center justify-center gap-2.5 rounded-full bg-red-500 px-5 py-4 text-sm font-semibold tracking-wide text-cream-050 transition-all duration-200 hover:-translate-y-0.5 hover:bg-red-600 hover:shadow-[0_0_28px_rgba(228,39,44,0.5)] active:scale-[0.98]"
-          >
-            <FlameIcon className="h-4 w-4" />
-            Quero entrar no Grupo VIP
-          </a>
-
           <Link
             href="/pedido"
-            className="flex flex-1 items-center justify-center gap-2.5 rounded-full bg-cream-050 px-5 py-4 text-sm font-semibold tracking-wide text-ink-900 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white active:scale-[0.98]"
+            className="flex flex-1 items-center justify-center gap-2.5 rounded-full bg-red-500 px-5 py-4 text-sm font-semibold tracking-wide text-cream-050 transition-all duration-200 hover:-translate-y-0.5 hover:bg-red-600 hover:shadow-[0_0_28px_rgba(228,39,44,0.5)] active:scale-[0.98]"
           >
             <BagIcon className="h-4 w-4" />
             Quero fazer um pedido
@@ -118,6 +108,16 @@ export default function Home() {
           >
             <GobletIcon className="h-4 w-4" />
             Quero reservar uma mesa
+          </a>
+
+          <a
+            href={siteConfig.whatsappGroupUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-1 items-center justify-center gap-2.5 rounded-full bg-cream-050 px-5 py-4 text-sm font-semibold tracking-wide text-ink-900 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white active:scale-[0.98]"
+          >
+            <FlameIcon className="h-4 w-4" />
+            Quero entrar no Grupo VIP
           </a>
         </div>
       </section>
