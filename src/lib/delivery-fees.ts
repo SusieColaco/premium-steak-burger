@@ -1,0 +1,60 @@
+export const DELIVERY_FEES: Record<string, number> = {
+  AEROPORTO: 10.0,
+  AGRARIA: 25.0,
+  "ALTO CASCAVEL": 10.0,
+  "ALTO DA XV": 13.0,
+  BATEL: 8.0,
+  BONSUCESSO: 10.0,
+  BOQUERIRAO: 10.0,
+  "BR 277": 13.0,
+  BR277: 22.0,
+  CASCAVEL: 8.0,
+  CENTRO: 9.0,
+  "CIDADE DOS LAGOS": 20.0,
+  CONRRADINHO: 10.0,
+  CONTINENTAL: 10.0,
+  "DOS ESTADOS": 9.0,
+  FERROZ: 15.0,
+  "FERROZ 2": 15.0,
+  "HOTEL LORENZETTI BR": 12.0,
+  "HOTEL SOLEDADE": 12.0,
+  INDUSTRIAL: 15.0,
+  "JARDIM DAS AMERICAS": 9.0,
+  "JARDIM PATRICIA": 10.0,
+  JORDAO: 16.0,
+  KARPINSKI: 12.0,
+  MANSUETO: 12.0,
+  "MIRANTÉ DA SERRA": 15.0,
+  "MORRO ALTO": 13.0,
+  "PAZ E BEM": 9.0,
+  PLANALTO: 9.0,
+  "PR 170": 13.0,
+  PRIMAVERA: 15.0,
+  "RESIDENCIAL 2000": 18.0,
+  "RIO COUTINHO": 18.0,
+  "ROYAL TRIP": 10.0,
+  "SANTA CRUZ": 9.0,
+  SANTANA: 12.0,
+  "SAO CRISTOVAO": 10.0,
+  "SÃO FRANCISCO": 20.0,
+  "TANCREDO NEVES": 9.0,
+  "TAXA BR 2": 15.0,
+  TRIANON: 10.0,
+  "VILA BELA": 7.0,
+  "VILA CARLI": 9.0,
+  "VILA RICA": 9.0,
+  "VILA OPERARIA": 9.0,
+  VERMOND: 12.0,
+  XARQUINHO: 15.0,
+  CEREJEIRAS: 18.0,
+  "COLONIA VITÓRIA": 40.0,
+};
+
+export function getDeliveryFee(neighborhood: string): number | null {
+  const normalized = neighborhood.toUpperCase().trim();
+  return DELIVERY_FEES[normalized] ?? null;
+}
+
+export function getAvailableNeighborhoods(): string[] {
+  return Object.keys(DELIVERY_FEES).sort();
+}
