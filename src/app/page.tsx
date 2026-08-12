@@ -80,10 +80,10 @@ export default function Home() {
           </div>
 
           <h1 className="mt-5 font-display text-[26px] font-semibold leading-snug tracking-normal text-cream-050 md:text-4xl md:tracking-wide">
-            O sabor que reúne
-            <br className="md:hidden" /> bons momentos!
+            Há 8 anos elevando
+            <br /> a gastronomia de Guarapuava
           </h1>
-          <p className="mt-3 max-w-[28ch] text-sm font-light leading-relaxed text-warm-200/70 md:max-w-md md:text-base">
+          <p className="mt-3 w-full text-sm font-light leading-relaxed text-warm-200/70 md:text-base">
             {siteConfig.subtext}
           </p>
         </div>

@@ -1,7 +1,8 @@
 export const siteConfig = {
   name: "Premium Steak Burger",
   tagline: "O sabor que reúne bons momentos!",
-  subtext: "Faça seu pedido, reserve sua mesa ou participe do grupo de ofertas exclusivas.",
+  subtext:
+    "A Premium é a steakhouse mais tradicional da cidade, com cortes nobres, burgers autorais, chopp e drinks à altura, num ambiente elegante e acolhedor, perfeito para jantares em família, encontros especiais ou pra quem quer viver essa experiência.",
 
   phoneDisplay: "(42) 99976-9258",
   whatsappNumber: "5542999769258",
