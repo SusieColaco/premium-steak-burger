@@ -9,6 +9,7 @@ import { allProducts } from "@/lib/menu";
 import { buildOrderMessage, type CheckoutInfo } from "@/lib/order-message";
 import { waLink } from "@/lib/config";
 import { getDeliveryFee, getAvailableNeighborhoods } from "@/lib/delivery-fees";
+import { getCoupon, getDiscount } from "@/lib/coupons";
 import { ScooterIcon } from "@/components/icons";
 
 function formatBRL(value: number) {
@@ -53,6 +54,10 @@ export default function CheckoutPage() {
   );
   const [addressLocked, setAddressLocked] = useState(false);
   const [deliveryFee, setDeliveryFee] = useState(0);
+
+  const coupon = getCoupon(form.coupon);
+  const discount = getDiscount(subtotal, form.coupon);
+  const total = subtotal - discount + deliveryFee;
 
   const items = useMemo(
     () =>
@@ -207,16 +212,24 @@ export default function CheckoutPage() {
               <span className="text-ink-900">Subtotal</span>
               <span className="text-red-500">{formatBRL(subtotal)}</span>
             </div>
+            {coupon && (
+              <div className="flex justify-between">
+                <span className="text-green">
+                  Desconto ({coupon.code} -{coupon.discountPercent}%)
+                </span>
+                <span className="text-green">-{formatBRL(discount)}</span>
+              </div>
+            )}
             {deliveryFee > 0 && (
               <div className="flex justify-between">
                 <span className="text-ink-900/80">Frete</span>
                 <span className="text-ink-900/80">{formatBRL(deliveryFee)}</span>
               </div>
             )}
-            {deliveryFee > 0 && (
+            {(deliveryFee > 0 || coupon) && (
               <div className="flex justify-between border-t border-ink-900/10 pt-2 font-semibold">
                 <span className="text-ink-900">Total</span>
-                <span className="text-red-500">{formatBRL(subtotal + deliveryFee)}</span>
+                <span className="text-red-500">{formatBRL(total)}</span>
               </div>
             )}
           </div>
@@ -408,6 +421,15 @@ export default function CheckoutPage() {
             placeholder="🏷️ Código do cupom (opcional)"
             className="w-full rounded-full border border-ink-900/15 bg-white px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-900/35 focus:border-red-500/60 focus:outline-none"
           />
+          {coupon && (
+            <p className="mt-1.5 text-xs text-green">
+              Cupom aplicado: {coupon.discountPercent}% de desconto (
+              {formatBRL(discount)}).
+            </p>
+          )}
+          {!coupon && form.coupon.trim() && (
+            <p className="mt-1.5 text-xs text-red-500">Cupom inválido.</p>
+          )}
         </div>
       </section>
 

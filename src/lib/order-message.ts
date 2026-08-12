@@ -1,4 +1,5 @@
 import { allProducts } from "@/lib/menu";
+import { getCoupon, getDiscount } from "@/lib/coupons";
 
 export type CheckoutInfo = {
   name: string;
@@ -52,12 +53,20 @@ export function buildOrderMessage(
     )
     .join("\n");
 
+  const coupon = getCoupon(info.coupon);
+  const discount = getDiscount(subtotal, info.coupon);
+  const couponLine = coupon
+    ? `\nDesconto (${coupon.code} -${coupon.discountPercent}%): -${formatBRL(discount)}`
+    : info.coupon?.trim()
+      ? `\nCupom informado (não reconhecido): ${info.coupon.trim()}`
+      : "";
+
   return `Olá! Gostaria de fazer o seguinte pedido:
 
 ${itemLines}
 
-Subtotal: ${formatBRL(subtotal)}
-Frete: a informar${info.coupon?.trim() ? `\nCupom: ${info.coupon.trim()}` : ""}
+Subtotal: ${formatBRL(subtotal)}${couponLine}
+Frete: a informar
 
 Dados para entrega:
 Nome: ${info.name}
