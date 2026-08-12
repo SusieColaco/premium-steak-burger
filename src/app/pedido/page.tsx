@@ -4,9 +4,8 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { menu, allProducts } from "@/lib/menu";
+import { menu, allProducts, cortesProductIds } from "@/lib/menu";
 import { useCart } from "@/lib/cart-context";
-import { BookIcon, WhatsAppIcon } from "@/components/icons";
 
 function formatBRL(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -49,23 +48,6 @@ function QuantityStepper({ productId }: { productId: string }) {
     </div>
   );
 }
-
-const STEPS = [
-  {
-    number: "1",
-    icon: BookIcon,
-    color: "text-red-500 bg-red-500/10",
-    title: "Escolha o que você quer",
-    text: "Monte seu pedido pelo cardápio.",
-  },
-  {
-    number: "2",
-    icon: WhatsAppIcon,
-    color: "text-[#25D366] bg-[#25D366]/10",
-    title: "Envie pelo WhatsApp",
-    text: "Seu pedido já chega organizado para nossa equipe.",
-  },
-];
 
 const CHIP_COLORS = [
   { active: "bg-red-500 border-red-500 text-cream-050" },
@@ -143,23 +125,10 @@ function PedidoContent() {
         <h1 className="mt-3 font-display text-xl font-bold leading-snug text-ink-900">
           Peça do seu jeito!
         </h1>
-
-        {/* Como funciona */}
-        <div className="mt-4 flex gap-3">
-          {STEPS.map((step) => (
-            <div key={step.number} className="flex flex-1 flex-col items-start gap-2">
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${step.color}`}
-              >
-                <step.icon className="h-[18px] w-[18px]" />
-              </span>
-              <p className="text-[11px] font-semibold leading-snug text-ink-900">
-                {step.title}
-              </p>
-              <p className="text-[10px] leading-snug text-ink-900/55">{step.text}</p>
-            </div>
-          ))}
-        </div>
+        <p className="mt-2 text-sm leading-relaxed text-ink-900/60">
+          Monte seu pedido no nosso cardápio. Com poucos cliques seu pedido
+          chega prontinho no WhatsApp da nossa equipe.
+        </p>
 
         <div className="mt-4">
           <input
@@ -174,7 +143,7 @@ function PedidoContent() {
 
       {/* Atalhos de categoria — fixos no topo ao rolar */}
       <div className="sticky top-0 z-20 border-b border-ink-900/10 bg-cream-050/95 px-6 py-3 backdrop-blur">
-        <div className="-mx-6 flex gap-2 overflow-x-auto px-6">
+        <div className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6">
           {menu.map((category, i) => {
             const isActive = openCategory === category.id && !search;
             const colorClass = CHIP_COLORS[i % CHIP_COLORS.length].active;
@@ -207,7 +176,7 @@ function PedidoContent() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  requireAccompaniment={product.categoryId === "cortes"}
+                  requireAccompaniment={cortesProductIds.has(product.id)}
                 />
               ))
             )}
@@ -234,7 +203,7 @@ function PedidoContent() {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    requireAccompaniment={category.id === "cortes"}
+                    requireAccompaniment={cortesProductIds.has(product.id)}
                   />
                 ))}
               </div>

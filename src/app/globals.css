@@ -64,3 +64,12 @@ body {
 .animate-gentle-float {
   animation: gentle-float 3.2s ease-in-out infinite;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

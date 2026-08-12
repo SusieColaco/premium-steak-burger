@@ -32,7 +32,9 @@ export function buildOrderMessage(
       return { product, quantity: line.quantity, note: line.note };
     })
     .filter(
-      (x): x is { product: (typeof allProducts)[number]; quantity: number; note?: string } =>
+      (
+        x
+      ): x is { product: (typeof allProducts)[number]; quantity: number; note: string | undefined } =>
         x !== null
     );
 

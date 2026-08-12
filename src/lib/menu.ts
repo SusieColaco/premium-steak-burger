@@ -567,3 +567,7 @@ export const menu: Category[] = [maisPedidos, ...baseMenu];
 export const allProducts = baseMenu.flatMap((c) =>
   c.products.map((p) => ({ ...p, categoryId: c.id, categoryName: c.name }))
 );
+
+export const cortesProductIds = new Set(
+  baseMenu.find((c) => c.id === "cortes")?.products.map((p) => p.id) ?? []
+);
