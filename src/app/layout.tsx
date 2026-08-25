@@ -106,8 +106,8 @@ export default function RootLayout({
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd) }}
         />
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-0XK65JRYTS" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-0XK65JRYTS');` }} />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-PBZ4VV27B9" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-PBZ4VV27B9');` }} />
         <CartProvider>{children}</CartProvider>
       </body>
     </html>
