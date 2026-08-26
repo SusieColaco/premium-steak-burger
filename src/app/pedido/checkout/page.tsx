@@ -124,6 +124,13 @@ export default function CheckoutPage() {
     if (!isValid) return;
     const message = buildOrderMessage(lines, form);
     const url = waLink(message);
+    if (typeof window !== "undefined" && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
+        (window as unknown as { gtag: (...args: unknown[]) => void }).gtag("event", "generate_lead", {
+              event_category: "pedido",
+              event_label: orderType,
+              value: total,
+        });
+    }
     window.open(url, "_blank", "noopener,noreferrer");
     clear();
     router.push("/");
