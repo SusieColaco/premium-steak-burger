@@ -3,7 +3,10 @@ export type Coupon = {
   discountPercent: number;
 };
 
-const COUPONS: Coupon[] = [{ code: "PREMIUM5", discountPercent: 5 }];
+const COUPONS: Coupon[] = [
+  { code: "PREMIUM5", discountPercent: 5 },
+  { code: "PREMIUM10", discountPercent: 10 },
+];
 
 export function getCoupon(code: string | undefined): Coupon | null {
   const normalized = code?.trim().toUpperCase();

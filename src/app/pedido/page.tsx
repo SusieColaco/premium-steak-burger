@@ -130,6 +130,15 @@ function PedidoContent() {
           chega prontinho no WhatsApp da nossa equipe.
         </p>
 
+        <div className="mt-4 flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2.5">
+          <span className="text-sm">🏷️</span>
+          <p className="text-[11px] font-medium leading-snug text-ink-900">
+            Use o cupom{" "}
+            <span className="font-bold text-gold">PREMIUM10</span> e garanta
+            10% de desconto no seu pedido!
+          </p>
+        </div>
+
         <div className="mt-4">
           <input
             type="text"
