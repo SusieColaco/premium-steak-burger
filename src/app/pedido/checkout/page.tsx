@@ -131,6 +131,14 @@ export default function CheckoutPage() {
               value: total,
         });
     }
+    if (typeof window !== "undefined" && (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq) {
+      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead", {
+        content_category: "pedido",
+        content_name: orderType,
+        value: total,
+        currency: "BRL",
+      });
+    }
     window.open(url, "_blank", "noopener,noreferrer");
     clear();
     router.push("/");
