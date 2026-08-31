@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
-import { allProducts } from "@/lib/menu";
+import { allProducts, getEffectivePrice, isProductPromoActive } from "@/lib/menu";
 import { buildOrderMessage, type CheckoutInfo } from "@/lib/order-message";
 import { waLink } from "@/lib/config";
 import { getDeliveryFee, getAvailableNeighborhoods } from "@/lib/delivery-fees";
@@ -55,10 +55,6 @@ export default function CheckoutPage() {
   const [addressLocked, setAddressLocked] = useState(false);
   const [deliveryFee, setDeliveryFee] = useState(0);
 
-  const coupon = getCoupon(form.coupon);
-  const discount = getDiscount(subtotal, form.coupon);
-  const total = subtotal - discount + deliveryFee;
-
   const items = useMemo(
     () =>
       lines
@@ -69,6 +65,16 @@ export default function CheckoutPage() {
         .filter((x): x is { line: typeof lines[number]; product: NonNullable<(typeof x)["product"]> } => !!x.product),
     [lines]
   );
+
+  const hasPromoExclusion = items.some(({ product }) => isProductPromoActive(product));
+  const couponEligibleSubtotal = items.reduce((sum, { line, product }) => {
+    if (isProductPromoActive(product)) return sum;
+    return sum + getEffectivePrice(product) * line.quantity;
+  }, 0);
+
+  const coupon = getCoupon(form.coupon);
+  const discount = getDiscount(couponEligibleSubtotal, form.coupon);
+  const total = subtotal - discount + deliveryFee;
 
   const isValid =
     form.name.trim() &&
@@ -207,10 +213,15 @@ export default function CheckoutPage() {
                 {line.note && (
                   <p className="mt-0.5 text-xs text-ink-900/50">{line.note}</p>
                 )}
+                {isProductPromoActive(product) && (
+                  <p className="mt-0.5 text-xs text-red-500">
+                    Promoção de hoje — não participa do cupom
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-ink-900/80">
-                  {formatBRL(product.price * line.quantity)}
+                  {formatBRL(getEffectivePrice(product) * line.quantity)}
                 </span>
                 <button
                   onClick={() => setQuantity(line.productId, 0)}
@@ -444,6 +455,11 @@ export default function CheckoutPage() {
           )}
           {!coupon && form.coupon.trim() && (
             <p className="mt-1.5 text-xs text-red-500">Cupom inválido.</p>
+          )}
+          {hasPromoExclusion && (
+            <p className="mt-1.5 text-xs text-ink-900/45">
+              Itens em promoção no seu pedido não entram no cálculo do cupom.
+            </p>
           )}
         </div>
       </section>

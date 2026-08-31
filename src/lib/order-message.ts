@@ -1,4 +1,4 @@
-import { allProducts } from "@/lib/menu";
+import { allProducts, getEffectivePrice, isProductPromoActive } from "@/lib/menu";
 import { getCoupon, getDiscount } from "@/lib/coupons";
 
 export type CheckoutInfo = {
@@ -40,21 +40,26 @@ export function buildOrderMessage(
     );
 
   const subtotal = items.reduce(
-    (sum, { product, quantity }) => sum + product.price * quantity,
+    (sum, { product, quantity }) => sum + getEffectivePrice(product) * quantity,
     0
   );
+
+  const couponEligibleSubtotal = items.reduce((sum, { product, quantity }) => {
+    if (isProductPromoActive(product)) return sum;
+    return sum + getEffectivePrice(product) * quantity;
+  }, 0);
 
   const itemLines = items
     .map(
       ({ product, quantity, note }) =>
-        `${product.name} x${quantity} — ${formatBRL(product.price * quantity)}${
-          note ? `\n  Acompanhamento: ${note}` : ""
-        }`
+        `${product.name} x${quantity} — ${formatBRL(getEffectivePrice(product) * quantity)}${
+          isProductPromoActive(product) ? " (promoção — não participa do cupom)" : ""
+        }${note ? `\n  Acompanhamento: ${note}` : ""}`
     )
     .join("\n");
 
   const coupon = getCoupon(info.coupon);
-  const discount = getDiscount(subtotal, info.coupon);
+  const discount = getDiscount(couponEligibleSubtotal, info.coupon);
   const couponLine = coupon
     ? `\nDesconto (${coupon.code} -${coupon.discountPercent}%): -${formatBRL(discount)}`
     : info.coupon?.trim()

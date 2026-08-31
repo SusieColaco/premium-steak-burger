@@ -8,7 +8,7 @@ import {
   useMemo,
   useCallback,
 } from "react";
-import { allProducts } from "@/lib/menu";
+import { allProducts, getEffectivePrice } from "@/lib/menu";
 
 const STORAGE_KEY = "premium-cart-v1";
 
@@ -99,7 +99,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const product = allProducts.find((p) => p.id === line.productId);
       if (!product) continue;
       count += line.quantity;
-      total += product.price * line.quantity;
+      total += getEffectivePrice(product) * line.quantity;
     }
     return { itemCount: count, subtotal: total };
   }, [lines]);

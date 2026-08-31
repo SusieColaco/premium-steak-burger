@@ -3,6 +3,10 @@ export type Product = {
   name: string;
   description: string;
   price: number;
+  promo?: {
+    price: number;
+    expiresAt: number;
+  };
 };
 
 export type Category = {
@@ -400,6 +404,10 @@ const baseMenu: Category[] = [
         description:
           "Pão baguete, maionese artesanal, picanha em tiras, queijo prato, bacon em tiras, confit de tomate sweet grape, cebola roxa + fritas.",
         price: 54,
+        promo: {
+          price: 40,
+          expiresAt: new Date("2026-08-31T22:59:00-03:00").getTime(),
+        },
       },
     ],
     note: "Pão sem glúten e vegano disponível. Consulte os valores na categoria Molhos e Adicionais.",
@@ -571,3 +579,11 @@ export const allProducts = baseMenu.flatMap((c) =>
 export const cortesProductIds = new Set(
   baseMenu.find((c) => c.id === "cortes")?.products.map((p) => p.id) ?? []
 );
+
+export function isProductPromoActive(product: Product): boolean {
+  return !!product.promo && Date.now() < product.promo.expiresAt;
+}
+
+export function getEffectivePrice(product: Product): number {
+  return isProductPromoActive(product) ? product.promo!.price : product.price;
+}

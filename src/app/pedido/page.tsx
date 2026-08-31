@@ -4,7 +4,13 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { menu, allProducts, cortesProductIds } from "@/lib/menu";
+import {
+  menu,
+  allProducts,
+  cortesProductIds,
+  isProductPromoActive,
+  getEffectivePrice,
+} from "@/lib/menu";
 import { useCart } from "@/lib/cart-context";
 
 function formatBRL(value: number) {
@@ -253,7 +259,13 @@ function ProductCard({
   product,
   requireAccompaniment = false,
 }: {
-  product: { id: string; name: string; description: string; price: number };
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    promo?: { price: number; expiresAt: number };
+  };
   requireAccompaniment?: boolean;
 }) {
   const { quantityOf, increment, noteOf, setNote } = useCart();
@@ -261,6 +273,7 @@ function ProductCard({
   const note = noteOf(product.id);
   const [pending, setPending] = useState("");
   const needsChoice = requireAccompaniment && qty === 0;
+  const onPromo = isProductPromoActive(product);
 
   return (
     <div className="rounded-[14px] border border-ink-900/10 bg-white p-4 shadow-[0_2px_10px_rgba(20,17,16,0.04)]">
@@ -274,9 +287,28 @@ function ProductCard({
               {product.description}
             </p>
           )}
-          <p className="mt-2 text-sm font-semibold text-red-500">
-            {formatBRL(product.price)}
-          </p>
+          {onPromo ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-ink-900/40 line-through">
+                {formatBRL(product.price)}
+              </span>
+              <span className="text-sm font-semibold text-red-500">
+                {formatBRL(getEffectivePrice(product))}
+              </span>
+              <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-red-500">
+                Promoção de hoje
+              </span>
+            </div>
+          ) : (
+            <p className="mt-2 text-sm font-semibold text-red-500">
+              {formatBRL(product.price)}
+            </p>
+          )}
+          {onPromo && (
+            <p className="mt-1 text-[10px] text-ink-900/40">
+              Cupom de desconto não é válido neste item.
+            </p>
+          )}
           {requireAccompaniment && qty > 0 && note && (
             <p className="mt-2 text-xs text-ink-900/60">
               Acompanhamento: {note}
