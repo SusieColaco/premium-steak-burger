@@ -10,6 +10,7 @@ import {
   cortesProductIds,
   isProductPromoActive,
   getEffectivePrice,
+  getActivePromoProducts,
 } from "@/lib/menu";
 import { useCart } from "@/lib/cart-context";
 
@@ -85,6 +86,8 @@ function PedidoContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const promoProducts = useMemo(() => getActivePromoProducts(), []);
+
   const searchResults = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return null;
@@ -135,6 +138,23 @@ function PedidoContent() {
           Monte seu pedido no nosso cardápio. Com poucos cliques seu pedido
           chega prontinho no WhatsApp da nossa equipe.
         </p>
+
+        {promoProducts.length > 0 && (
+          <div className="mt-4">
+            <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-red-500">
+              🔥 Destaque de hoje
+            </p>
+            <div className="rounded-[16px] border-2 border-red-500/25 bg-red-500/5 p-2">
+              {promoProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  requireAccompaniment={cortesProductIds.has(product.id)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-4 flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2.5">
           <span className="text-sm">🏷️</span>

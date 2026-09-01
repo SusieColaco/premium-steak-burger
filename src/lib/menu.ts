@@ -587,3 +587,7 @@ export function isProductPromoActive(product: Product): boolean {
 export function getEffectivePrice(product: Product): number {
   return isProductPromoActive(product) ? product.promo!.price : product.price;
 }
+
+export function getActivePromoProducts() {
+  return allProducts.filter((p) => isProductPromoActive(p));
+}
